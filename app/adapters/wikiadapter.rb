@@ -1,42 +1,44 @@
 require 'httparty'
 
-
 class WikiAdapter
 
-  def self.get_article(title)
+  # next, we create a looping call
+
+  def self.call(query)
     base_url = 'https://en.wikipedia.org/w/api.php' + '?'
+    query_url = query.map {|key, value| "#{key}=#{value}"}.join('&')
+    full_url = base_url + query_url
+    return HTTParty.get(full_url)
+  end
+
+  def self.get_article(title)
     query = {
       action: 'query',
       format: 'json',
-      prop: 'linkshere|images|categories|coordinates|extracts',
+      prop: 'images|categories|coordinates|extracts',
       lhnamespace: '0',
       titles: title,
       explaintext: ''
     }
-    query_url = query.map {|key, value| "#{key}=#{value}"}.join('&')
-    full_url = base_url + query_url
-    response = HTTParty.get(full_url)
+    response = WikiAdapter.call(query)
     return response.parsed_response
   end
 
-  def self.get_links(title = 'Albert_Einstein')
-    base_url = 'https://en.wikipedia.org/w/api.php' + '?'
+  def self.get_links(title, next_page = {})
     query = {
       action: 'query',
       format: 'json',
-      prop: 'links',
+      prop: 'linkshere',
+      lhnamespace: '0',
       titles: title,
-      pllimit: 'max',
-      plnamespace: '0'
+      explaintext: ''
     }
-    query_url = query.map {|key, value| "#{key}=#{value}"}.join('&')
-    full_url = base_url + query_url
-    response = HTTParty.get(full_url)
+    query.merge!(next_page)
+    response = WikiAdapter.call(query)
     return response.parsed_response
   end
 
   def self.get_picture(title = 'Albert_Einstein')
-    base_url = 'https://en.wikipedia.org/w/api.php' + '?'
     query = {
       action: 'query',
       format: 'json',
@@ -44,11 +46,8 @@ class WikiAdapter
       iiprop: 'url',
       titles: title
     }
-    query_url = query.map {|key, value| "#{key}=#{value}"}.join('&')
-    full_url = base_url + query_url
-    response = HTTParty.get(full_url)
+    response = WikiAdapter.call(query)
     return response.parsed_response
   end
-
 
 end

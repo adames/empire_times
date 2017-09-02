@@ -11,12 +11,15 @@ class WikiAdapter
 
   def self.get_article(title)
     query = {
+      titles: title,
       action: 'query',
       format: 'json',
-      prop: 'images|categories|coordinates|extracts',
-      lhnamespace: '0',
-      titles: title,
-      explaintext: ''
+      prop: 'categories|extracts|pageimages',
+      imlimit: 'max',
+      cllimit: 'max',
+      clshow: '!hidden',
+      pithumbsize: '1000',
+      explaintext: '',
     }
     response = WikiAdapter.call(query)
     return response.parsed_response
@@ -24,26 +27,14 @@ class WikiAdapter
 
   def self.get_links(title, next_page = {})
     query = {
+      titles: title,
       action: 'query',
       format: 'json',
       prop: 'linkshere',
       lhnamespace: '0',
-      titles: title,
-      explaintext: ''
+      lhlimit: 'max',
     }
     query.merge!(next_page)
-    response = WikiAdapter.call(query)
-    return response.parsed_response
-  end
-
-  def self.get_picture(title = 'Albert_Einstein')
-    query = {
-      action: 'query',
-      format: 'json',
-      prop: 'imageinfo',
-      iiprop: 'url',
-      titles: title
-    }
     response = WikiAdapter.call(query)
     return response.parsed_response
   end

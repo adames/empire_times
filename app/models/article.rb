@@ -9,7 +9,7 @@ class Article < ApplicationRecord
     image_url = article['thumbnail']['source']
     categories = article['categories'].map {|cat| cat['title'].slice(9..-1)}
     extract = article['extract']
-    byebug
+    
     return {
       title: title,
       image_url: image_url,

@@ -2,8 +2,6 @@ require 'httparty'
 
 class WikiAdapter
 
-  # next, we create a looping call
-
   def self.call(query)
     base_url = 'https://en.wikipedia.org/w/api.php' + '?'
     query_url = query.map {|key, value| "#{key}=#{value}"}.join('&')

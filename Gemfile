@@ -7,6 +7,7 @@ end
 
 #Adames's new gems
 gem 'httparty'
+gem 'nokogiri'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.1.3'

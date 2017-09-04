@@ -9,17 +9,38 @@ class WikiAdapter
     return HTTParty.get(full_url)
   end
 
-  def self.get_article(title)
+  def self.get_article_html(title)
+    query = {
+      page: title,
+      action: 'parse',
+      format: 'json',
+      prop: 'text',
+    }
+    response = WikiAdapter.call(query)
+    return response.parsed_response
+  end
+
+  def self.get_article_text(title)
     query = {
       titles: title,
       action: 'query',
       format: 'json',
-      prop: 'categories|extracts|pageimages',
-      imlimit: 'max',
+      prop: 'categories|extracts',
       cllimit: 'max',
       clshow: '!hidden',
       pithumbsize: '1000',
-      explaintext: '',
+    }
+    response = WikiAdapter.call(query)
+    return response.parsed_response
+  end
+
+  def self.get_article_image(title)
+    query = {
+      titles: title,
+      action: 'query',
+      format: 'json',
+      prop: 'pageimages',
+      pithumbsize: '1000',
     }
     response = WikiAdapter.call(query)
     return response.parsed_response
@@ -29,10 +50,15 @@ class WikiAdapter
     query = {
       titles: title,
       action: 'query',
+      generator: 'links',
       format: 'json',
-      prop: 'linkshere',
-      lhnamespace: '0',
-      lhlimit: 'max',
+      prop: 'pageimages|extracts',
+      gplprop: 'title',
+      gplshow: '!redirect',
+      gplnamespace: '0',
+      gpllimit: 'max',
+      exintro: '',
+      explaintext: '',
     }
     query.merge!(next_page)
     response = WikiAdapter.call(query)

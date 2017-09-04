@@ -11,25 +11,50 @@ class Article < ApplicationRecord
       el.node_name == 'h3' ||
       el.node_name == 'h2'
     end
-    page_obj = {}
-    h2 = 'introduction'
-    h3 = 'summary'
+    h2 = 'Summary'
+    h3 = 'Introduction'
+    page_obj = {h2 => {h3 => []}}
 
     content.each do |node|
       if node.node_name == 'h2'
-        h2 = node.text
+        h2 = Article.clean_edits(node.text)
+        h3 = 'Introduction'
       elsif node.node_name == 'h3'
         h3 = node.text
+        page_obj[h2] = {h3 => []}
       elsif node.node_name == 'p'
+
+        article_links = node.css('a').map do |a|
+          if a.attributes['title']
+            a.attributes['title'].value
+          end
+        end.compact
+
         p_obj = {
-          text: node.text,
-          links: node.css('a').map{|a| a.attributes['href'].value}
+          "text" => Article.clean_citations(node.text),
+          "links" => article_links
         }
-        page_obj[h2][h3][] << p_obj
-        page_obj[h2][h3][node.text] = node
+
+        if page_obj[h2].nil?
+          page_obj[h2] = {'Introduction' => [p_obj]}
+        else
+          page_obj[h2][h3] << p_obj
+        end
+
+      end
+    end
     byebug
-    #TODO fix my link selector. below is clue.
-    # document.css('div.mw-parser-output p')[0].css('a').map{|a| a.attributes['title'].value}
+    return page_obj
+  end
+
+  def self.clean_citations(text)
+    text.gsub(/(\[\d+\])+(\:\d+)*/,"") #removes citation (+ colon digits)
+    #other possible fix: (\[\d+?\])+(\:\d+)*
+  end
+
+  def self.clean_edits(text)
+    text.gsub(/(\[\w+\])/,"") #removes [edit] from headers
+    #other possible fix: (\[\d+?\])+(\:\d+)*
   end
 
   def request_article_html(title = 'Albert_Einstein')
@@ -41,21 +66,21 @@ class Article < ApplicationRecord
     }
   end
 
-  def request_article_text(title = 'Albert_Einstein')
-    response = WikiAdapter.get_article_text(title)
-    article = response['query']['pages'].first[1]
-    title = article['title']
-    image_url = article['thumbnail']['source']
-    categories = article['categories'].map {|cat| cat['title']}
-    extract = article['extract']
-    byebug
-    return {
-      title: title,
-      image_url: image_url,
-      categories: categories,
-      extract: extract
-    }
-  end
+  # def request_article_text(title = 'Albert_Einstein')
+  #   response = WikiAdapter.get_article_text(title)
+  #   article = response['query']['pages'].first[1]
+  #   title = article['title']
+  #   image_url = article['thumbnail']['source']
+  #   categories = article['categories'].map {|cat| cat['title']}
+  #   extract = article['extract']
+  #   byebug
+  #   return {
+  #     title: title,
+  #     image_url: image_url,
+  #     categories: categories,
+  #     extract: extract
+  #   }
+  # end
 
   def request_article_links(title = 'Albert_Einstein')
     links = []

@@ -1,9 +1,8 @@
 class ArticlesController < ApplicationController
 
-  def create
-    a = Article.new
-    byebug
-    render json: a.request_article
+  def find
+    title = params[:title]
+    render json: Article.request_article_html
   end
 
 end

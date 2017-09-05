@@ -1,7 +1,16 @@
 require_relative '../adapters/wikiadapter.rb'
 require 'nokogiri'
 
-class Article < ApplicationRecord
+class Article
+
+  def self.request_article_html(title = 'Albert_Einstein')
+    response = WikiAdapter.get_article_html(title)
+    article = Article.parse_html(response['parse']['text']['*'])
+    return {
+      title: response['parse']['title'],
+      article: article,
+    }
+  end
 
   def self.parse_html(html)
     document = Nokogiri::HTML(html)
@@ -19,9 +28,10 @@ class Article < ApplicationRecord
       if node.node_name == 'h2'
         h2 = Article.clean_edits(node.text)
         h3 = 'Introduction'
+        page_obj[h2] = {}
       elsif node.node_name == 'h3'
-        h3 = node.text
-        page_obj[h2] = {h3 => []}
+        h3 = Article.clean_edits(node.text)
+        page_obj[h2].merge(h3 => [])
       elsif node.node_name == 'p'
 
         article_links = node.css('a').map do |a|
@@ -36,14 +46,16 @@ class Article < ApplicationRecord
         }
 
         if page_obj[h2].nil?
-          page_obj[h2] = {'Introduction' => [p_obj]}
+          page_obj['Summary'] = {'Introduction' => [p_obj]}
+        elsif page_obj[h2][h3].nil?
+          page_obj[h2][h3] = [p_obj]
         else
           page_obj[h2][h3] << p_obj
         end
 
       end
     end
-    byebug
+
     return page_obj
   end
 
@@ -55,15 +67,6 @@ class Article < ApplicationRecord
   def self.clean_edits(text)
     text.gsub(/(\[\w+\])/,"") #removes [edit] from headers
     #other possible fix: (\[\d+?\])+(\:\d+)*
-  end
-
-  def request_article_html(title = 'Albert_Einstein')
-    response = WikiAdapter.get_article_html(title)
-    article = Article.parse_html(response['parse']['text']['*'])
-    return {
-      title: response['parse']['title'],
-      article: article,
-    }
   end
 
   # def request_article_text(title = 'Albert_Einstein')
@@ -82,7 +85,7 @@ class Article < ApplicationRecord
   #   }
   # end
 
-  def request_article_links(title = 'Albert_Einstein')
+  def self.request_article_links(title = 'Albert_Einstein')
     links = []
     continue_query = {}
     while links.count < 12000

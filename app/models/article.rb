@@ -20,14 +20,14 @@ class Article
       el.node_name == 'h3' ||
       el.node_name == 'h2'
     end
-    h2 = 'Summary'
-    h3 = 'Introduction'
+    h2 = 'Overview'
+    h3 = 'Synopsis'
     page_obj = {h2 => {h3 => []}}
 
     content.each do |node|
       if node.node_name == 'h2'
         h2 = Article.clean_edits(node.text)
-        h3 = 'Introduction'
+        h3 = h2
         page_obj[h2] = {}
       elsif node.node_name == 'h3'
         h3 = Article.clean_edits(node.text)

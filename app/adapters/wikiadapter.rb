@@ -26,7 +26,7 @@ class WikiAdapter
       action: 'opensearch',
       profile: 'fuzzy',
       format: 'json',
-      limit: '10',
+      limit: '5',
       namespace: '0',
       redirect: 'resolve',
     }

@@ -20,6 +20,20 @@ class WikiAdapter
     return response.parsed_response
   end
 
+  def self.search_titles(searchterm)
+    query = {
+      search: searchterm,
+      action: 'opensearch',
+      profile: 'fuzzy',
+      format: 'json',
+      limit: '10',
+      namespace: '0',
+      redirect: 'resolve',
+    }
+    response = WikiAdapter.call(query)
+    return response.parsed_response
+  end
+
   def self.get_article_text(title)
     query = {
       titles: title,

@@ -84,6 +84,15 @@ class Article
   #     extract: extract
   #   }
   # end
+  def self.search_wikipedia(searchterm = 'Albert_Einstein')
+    responses = WikiAdapter.search_titles(searchterm)
+    responses[1].map.with_index do |r, i|
+      {
+        title: r,
+        description: responses[2][i],
+      }
+    end
+  end
 
   def self.request_article_links(title = 'Albert_Einstein')
     links = []

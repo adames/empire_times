@@ -52,7 +52,6 @@ class Article
         else
           page_obj[h2][h3] << p_obj
         end
-
       end
     end
 
@@ -69,21 +68,6 @@ class Article
     #other possible fix: (\[\d+?\])+(\:\d+)*
   end
 
-  # def request_article_text(title = 'Albert_Einstein')
-  #   response = WikiAdapter.get_article_text(title)
-  #   article = response['query']['pages'].first[1]
-  #   title = article['title']
-  #   image_url = article['thumbnail']['source']
-  #   categories = article['categories'].map {|cat| cat['title']}
-  #   extract = article['extract']
-  #   byebug
-  #   return {
-  #     title: title,
-  #     image_url: image_url,
-  #     categories: categories,
-  #     extract: extract
-  #   }
-  # end
   def self.search_wikipedia(searchterm = 'Albert_Einstein')
     responses = WikiAdapter.search_titles(searchterm)
     responses[1].map.with_index do |r, i|
@@ -94,33 +78,43 @@ class Article
     end
   end
 
-  def self.request_article_links(title = 'Albert_Einstein')
-    links = []
-    continue_query = {}
-    while links.count < 12000
-      response = WikiAdapter.get_links(title, continue_query)
+  #TODO
+    # build route
+    # send requests (make sure cycle complete)
+    # test call in postman
+    # take out any unnessary data from call
+    # make sure data gets back to article from adapter
+    # pull necessary info for object
+    # return info to controller
 
-      #TODO
-      # The code below is broken because there aren't extracts or
-      # pics on each link. either filter linkshere, filter after response (here),
-      # or split into separate calls.
 
-      byebug
-      testobj = response['query']['pages'].each_with_object({}) do |link, link_obj|
-        link_obj['title'] = link.first[1]['title']
-        link_obj['image'] = link.first[1]['thumbnail']['source']
-        link_obj['extract'] = link.first[1]['extract']
-      end
-
-      if response['continue'].nil?
-        return links
-      else
-        continue = response['continue'].first
-        continue_query = Hash[*continue]
-      end
+  def self.request_article_links(titles = 'Albert_Einstein')
+    response = WikiAdapter.get_links(titles.join('|'))
+    byebug
+    links = response['query']['pages'].map do |link|
+      link_obj['title'] = link.first[1]['title']
+      link_obj['image'] = link.first[1]['thumbnail']['source']
+      link_obj['extract'] = link.first[1]['extract']
     end
   end
 end
+
+# Obsolete code
+# def request_article_text(title = 'Albert_Einstein')
+#   response = WikiAdapter.get_article_text(title)
+#   article = response['query']['pages'].first[1]
+#   title = article['title']
+#   image_url = article['thumbnail']['source']
+#   categories = article['categories'].map {|cat| cat['title']}
+#   extract = article['extract']
+#   byebug
+#   return {
+#     title: title,
+#     image_url: image_url,
+#     categories: categories,
+#     extract: extract
+#   }
+# end
 
 # What DJ uses to traverse hashes
 # def self.check(hash, key, ret = [])

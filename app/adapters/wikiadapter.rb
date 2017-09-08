@@ -60,17 +60,16 @@ class WikiAdapter
     return response.parsed_response
   end
 
-  def self.get_links(title, next_page = {})
+  def self.get_links(titles)
     query = {
-      titles: title,
+      titles: titles,
       action: 'query',
-      generator: 'links',
       format: 'json',
       prop: 'pageimages|extracts',
-      gplprop: 'title',
-      gplshow: '!redirect',
-      gplnamespace: '0',
-      gpllimit: 'max',
+      plprop: 'title',
+      plshow: '!redirect',
+      plnamespace: '0',
+      pllimit: 'max',
       exintro: '',
       explaintext: '',
     }

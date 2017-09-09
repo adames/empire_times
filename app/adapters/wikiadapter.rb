@@ -1,6 +1,6 @@
 require 'httparty'
 
-class WikiAdapter
+class WikipediaAPI
 
   def self.call(query)
     base_url = 'https://en.wikipedia.org/w/api.php' + '?'
@@ -16,7 +16,7 @@ class WikiAdapter
       format: 'json',
       prop: 'text',
     }
-    response = WikiAdapter.call(query)
+    response = WikipediaAPI.call(query)
     return response.parsed_response
   end
 
@@ -30,7 +30,7 @@ class WikiAdapter
       namespace: '0',
       redirect: 'resolve',
     }
-    response = WikiAdapter.call(query)
+    response = WikipediaAPI.call(query)
     return response.parsed_response
   end
 
@@ -44,7 +44,7 @@ class WikiAdapter
       clshow: '!hidden',
       pithumbsize: '1000',
     }
-    response = WikiAdapter.call(query)
+    response = WikipediaAPI.call(query)
     return response.parsed_response
   end
 
@@ -56,7 +56,7 @@ class WikiAdapter
       prop: 'pageimages',
       pithumbsize: '1000',
     }
-    response = WikiAdapter.call(query)
+    response = WikipediaAPI.call(query)
     return response.parsed_response
   end
 
@@ -66,15 +66,14 @@ class WikiAdapter
       action: 'query',
       format: 'json',
       prop: 'pageimages|extracts',
-      plprop: 'title',
-      plshow: '!redirect',
-      plnamespace: '0',
-      pllimit: 'max',
-      exintro: '',
+      namespace: '0',
+      pithumbsize: '1000',
+      exchars: '250',
+      exlimit: '20',
       explaintext: '',
+      exintro: '',
     }
-    query.merge!(next_page)
-    response = WikiAdapter.call(query)
+    response = WikipediaAPI.call(query)
     return response.parsed_response
   end
 

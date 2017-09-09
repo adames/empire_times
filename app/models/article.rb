@@ -1,11 +1,12 @@
 require_relative '../adapters/wikiadapter.rb'
 require 'nokogiri'
 
-class Article
+class WikipediaText
 
-  def self.request_article_html(title = 'Albert_Einstein')
-    response = WikiAdapter.get_article_html(title)
-    article = Article.parse_html(response['parse']['text']['*'])
+  def self.request_html(title = 'Albert_Einstein')
+
+    response = WikipediaAPI.get_article_html(title)
+    article = WikipediaText.parse_html(response['parse']['text']['*'])
     return {
       title: response['parse']['title'],
       article: article,
@@ -26,11 +27,11 @@ class Article
 
     content.each do |node|
       if node.node_name == 'h2'
-        h2 = Article.clean_edits(node.text)
+        h2 = WikipediaText.clean_edits(node.text)
         h3 = h2
         page_obj[h2] = {}
       elsif node.node_name == 'h3'
-        h3 = Article.clean_edits(node.text)
+        h3 = WikipediaText.clean_edits(node.text)
         page_obj[h2].merge(h3 => [])
       elsif node.node_name == 'p'
 
@@ -41,7 +42,7 @@ class Article
         end.compact
 
         p_obj = {
-          "text" => Article.clean_citations(node.text),
+          "text" => WikipediaText.clean_edits(WikipediaText.clean_citations(node.text)),
           "links" => article_links
         }
 
@@ -58,6 +59,13 @@ class Article
     return page_obj
   end
 
+  # # Runs all cleaners.
+  # def remove_all_complex_text(text)
+  #   clean_text = text.clone
+  #   clean_text = clean_citations(clean_text)
+  #   clean_text = clean_edits(text)
+  # end
+
   def self.clean_citations(text)
     text.gsub(/(\[\d+\])+(\:\d+)*/,"") #removes citation (+ colon digits)
     #other possible fix: (\[\d+?\])+(\:\d+)*
@@ -69,7 +77,7 @@ class Article
   end
 
   def self.search_wikipedia(searchterm = 'Albert_Einstein')
-    responses = WikiAdapter.search_titles(searchterm)
+    responses = WikipediaAPI.search_titles(searchterm)
     responses[1].map.with_index do |r, i|
       {
         title: r,
@@ -78,30 +86,29 @@ class Article
     end
   end
 
+  def self.request_preview(titles = 'Albert_Einstein|Ancient_Rome')
+    response = WikipediaAPI.get_links(titles)
+    return response['query']['pages'].map do |article, article_info|
+      link_obj = {}
+      link_obj['title'] = article_info['title']
+      link_obj['image'] = article_info['thumbnail']['source'] unless article_info['thumbnail'].nil?
+      link_obj['extract'] = article_info['extract']
+      link_obj
+    end
+  end
+end
+
   #TODO
-    # build route
     # send requests (make sure cycle complete)
-    # test call in postman
     # take out any unnessary data from call
     # make sure data gets back to article from adapter
     # pull necessary info for object
     # return info to controller
 
 
-  def self.request_article_links(titles = 'Albert_Einstein')
-    response = WikiAdapter.get_links(titles.join('|'))
-    byebug
-    links = response['query']['pages'].map do |link|
-      link_obj['title'] = link.first[1]['title']
-      link_obj['image'] = link.first[1]['thumbnail']['source']
-      link_obj['extract'] = link.first[1]['extract']
-    end
-  end
-end
-
 # Obsolete code
 # def request_article_text(title = 'Albert_Einstein')
-#   response = WikiAdapter.get_article_text(title)
+#   response = WikipediaAPI.get_article_text(title)
 #   article = response['query']['pages'].first[1]
 #   title = article['title']
 #   image_url = article['thumbnail']['source']

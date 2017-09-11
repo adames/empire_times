@@ -27,7 +27,7 @@ class WikipediaAPI
       action: 'opensearch',
       profile: 'fuzzy',
       format: 'json',
-      limit: '5',
+      limit: '8',
       namespace: '0',
       redirect: 'resolve',
     }
@@ -73,6 +73,7 @@ class WikipediaAPI
       exlimit: '20',
       explaintext: '',
       exintro: '',
+      redirects: '',
     }
     response = WikipediaAPI.call(query)
     return response.parsed_response

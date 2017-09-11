@@ -34,6 +34,7 @@ class WikipediaText
         h3 = WikipediaText.clean_edits(node.text)
         page_obj[h2].merge(h3 => [])
       elsif node.node_name == 'p'
+        next if node.text == "" || node.text[0..11] == "Coordinates:"
 
         article_links = node.css('a').map do |a|
           if a.attributes['title']

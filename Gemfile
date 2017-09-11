@@ -8,6 +8,7 @@ end
 #Adames's new gems
 gem 'httparty'
 gem 'nokogiri'
+gem 'rack-cors', :require => 'rack/cors'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.1.3'

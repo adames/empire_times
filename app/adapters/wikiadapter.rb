@@ -1,12 +1,13 @@
 require 'httparty'
+require 'uri'
 
 class WikipediaAPI
 
   def self.call(query)
     base_url = 'https://en.wikipedia.org/w/api.php' + '?'
     query_url = query.map {|key, value| "#{key}=#{value}"}.join('&')
-    full_url = base_url + query_url
-    return HTTParty.get(full_url)
+    ready_url = URI.encode(base_url + query_url)
+    return HTTParty.get(ready_url)
   end
 
   def self.get_article_html(title)

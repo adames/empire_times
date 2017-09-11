@@ -1,3 +1,6 @@
+require "#{Rails.root}/app/models/article.rb"
+#added the above because I'd like to move the model article. not a db model
+
 class ArticlesController < ApplicationController
 
   def get

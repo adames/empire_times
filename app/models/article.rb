@@ -56,6 +56,7 @@ class WikipediaText
         end
       end
     end
+    #finally, i want to remove notes and 
 
     return page_obj
   end

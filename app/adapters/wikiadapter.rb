@@ -27,7 +27,7 @@ class WikipediaAPI
       action: 'opensearch',
       profile: 'fuzzy',
       format: 'json',
-      limit: '8',
+      limit: '5',
       namespace: '0',
       redirect: 'resolve',
     }

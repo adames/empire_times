@@ -62,7 +62,7 @@ class WikipediaText
       # References
       # Further reading
       # External links
-    superfulous_h2s = ['See Also', 'Notes', 'References', 'Further reading', 'External links']
+    superfulous_h2s = ['See also', 'Notes', 'References', 'Further reading', 'External links']
     superfulous_h2s.each { |k| page_obj.delete k }
 
 

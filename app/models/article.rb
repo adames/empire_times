@@ -65,6 +65,8 @@ class WikipediaText
     superfulous_h2s = ['See also', 'Notes', 'References', 'Further reading', 'External links']
     superfulous_h2s.each { |k| page_obj.delete k }
 
+    #next, I should delete empty headers
+
 
     return page_obj
   end
@@ -107,13 +109,6 @@ class WikipediaText
     end
   end
 end
-
-  #TODO
-    # send requests (make sure cycle complete)
-    # take out any unnessary data from call
-    # make sure data gets back to article from adapter
-    # pull necessary info for object
-    # return info to controller
 
 
 # Obsolete code

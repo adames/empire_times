@@ -9,10 +9,11 @@ end
 gem 'httparty'
 gem 'nokogiri'
 gem 'rack-cors', :require => 'rack/cors'
+gem "figaro"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.1.3'
-# Use sqlite3 as the database for Active Record
+# Use pg instaed of sqlite3 as the database for Active Record
 gem 'pg'
 
 # Use Puma as the app server

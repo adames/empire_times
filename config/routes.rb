@@ -3,4 +3,5 @@ Rails.application.routes.draw do
   get 'articles', to: 'articles#get'
   get 'articles/search', to: 'articles#search'
   get 'articles/related', to: 'articles#related'
+  get 'images', to: 'images#get'
 end

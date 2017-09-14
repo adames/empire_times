@@ -1,10 +1,11 @@
-require_relative '../adapters/bingadapter.rb'
+require_relative '../adapters/pixabayapi.rb'
 
 
-class BingImages
+class PixabayImages
 
   def self.get_images(title = 'Albert_Einstein')
-    response = BingAPI.images(title)
-    return response['value'].map { |image| image['contentUrl'] }
+    response = PixabayAPI.images(title)
+    byebug
+    return response['hits'].map { |image| image['webformatURL'] }
   end
 end

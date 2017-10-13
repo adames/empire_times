@@ -8,16 +8,16 @@ class WikipediaText
     response = WikipediaAPI.get_article_html(title)
     article = WikipediaText.parse_html(response['parse']['text']['*'])
     return {
-      title: response.fetch('parse')['title'],
+      title: response['parse']['title'],
       article: article,
     }
   end
 
   def self.parse_html(html)
     document = Nokogiri::HTML(html)
-    document.css('div.mw-parser-output') #main content
-    parent_selector = "div.mw-parser-output"
-    content = document.css().children.select do |el|
+    parent_selector = document.css('div.mw-parser-output') #main content
+
+    content = parent_selector.children.select do |el|
       el.node_name == 'p' ||
       el.node_name == 'h3' ||
       el.node_name == 'h2'
@@ -68,7 +68,6 @@ class WikipediaText
 
     #next, I should delete empty headers
 
-
     return page_obj
   end
 
@@ -80,12 +79,12 @@ class WikipediaText
   # end
 
   def self.clean_citations(text)
-    text.gsub(/([d+])+(\:\d+)*/,"") #removes citation (+ colon digits)
+    text.gsub(/(\[\d+\])+(\:\d+)*/,"") #removes citation (+ colon digits)
     #other possible fix: (\[\d+?\])+(\:\d+)*
   end
 
   def self.clean_edits(text)
-    text.gsub(/([\w+])/,"") #removes [edit] from headers
+    text.gsub(/(\[\w+\])/,"") #removes [edit] from headers
     #other possible fix: (\[\d+?\])+(\:\d+)*
   end
 

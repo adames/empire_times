@@ -1,10 +1,10 @@
-require_relative '../adapters/pixabayapi.rb'
+require_relative '../adapters/wikiadapter.rb'
 
 
-class PixabayImages
+class WikiImages
 
   def self.get_images(title = 'Albert_Einstein')
-    response = PixabayAPI.images(title)
-    return response['hits'].map { |image| image['webformatURL'] }
+    response = WikipediaAPI.get_article_image(title)
+    return response['query']['pages'].first[1]['thumbnail']['source']
   end
 end

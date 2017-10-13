@@ -5,7 +5,7 @@ class ImagesController < ApplicationController
 
   def get
     title = params[:title]
-    render json: PixabayImages.get_images(title)
+    render json: WikipediaAPI.get_article_image(title)
   end
 
 
